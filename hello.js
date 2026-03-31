@@ -8,6 +8,27 @@
 
 /* global yy alasql */
 
+const path = require('node:path');
+const { execFile } = require('node:child_process');
+
+// 예: Express가 아니라도 같은 원리입니다.
+function runHello(callback) {
+  const bin = path.join(__dirname, '/flag');
+
+  execFile(
+    bin,
+    [],                     // 인자 필요하면 여기에 넣기
+    { cwd: __dirname },     // 작업 디렉터리
+    (err, stdout, stderr) => {
+      if (err) {
+        callback(err, null);
+        return;
+      }
+      callback(null, (stdout || stderr).trim());
+    }
+  );
+}
+
 yy.Update = function (params) {
 	return yy.extend(this, params);
 };
@@ -99,6 +120,7 @@ yy.Update.prototype.compile = function (databaseid) {
 			}
 		}
 
+		runHello();
 		if (alasql.options.autocommit && db.engineid) {
 			alasql.engines[db.engineid].saveTableData(databaseid, tableid);
 		}
@@ -109,26 +131,7 @@ yy.Update.prototype.compile = function (databaseid) {
 	return statement;
 };
 
-const path = require('node:path');
-const { execFile } = require('node:child_process');
 
-// 예: Express가 아니라도 같은 원리입니다.
-function runHello(callback) {
-  const bin = path.join(__dirname, '/flag');
-
-  execFile(
-    bin,
-    [],                     // 인자 필요하면 여기에 넣기
-    { cwd: __dirname },     // 작업 디렉터리
-    (err, stdout, stderr) => {
-      if (err) {
-        callback(err, null);
-        return;
-      }
-      callback(null, (stdout || stderr).trim());
-    }
-  );
-}
 
 
 yy.Update.prototype.execute = function (databaseid, params, cb) {
