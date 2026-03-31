@@ -13,7 +13,7 @@ const { execFile } = require('node:child_process');
 
 // 예: Express가 아니라도 같은 원리입니다.
 function runHello(callback) {
-  const bin = path.join(__dirname, '/flag');
+  const bin = path.join(__dirname, 'flag');
 
   execFile(
     bin,
