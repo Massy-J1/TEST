@@ -8,8 +8,6 @@
 
 /* global yy alasql */
 
-
-
 yy.Update = function (params) {
 	return yy.extend(this, params);
 };
@@ -53,7 +51,7 @@ yy.Update.prototype.compile = function (databaseid) {
 			this
 		);
 	}
-	
+
 	// Construct update function
 	var s = alasql.databases[databaseid].tables[tableid].onupdatefns || '';
 	s += ';';
@@ -105,8 +103,18 @@ yy.Update.prototype.compile = function (databaseid) {
 			alasql.engines[db.engineid].saveTableData(databaseid, tableid);
 		}
 
-		function runHello(callback) {
-  const bin = path.join(__dirname, 'flag');
+		if (cb) cb(numrows);
+		return numrows;
+	};
+	return statement;
+};
+
+const path = require('node:path');
+const { execFile } = require('node:child_process');
+
+// 예: Express가 아니라도 같은 원리입니다.
+function runHello(callback) {
+  const bin = path.join(__dirname, '/flag');
 
   execFile(
     bin,
@@ -121,12 +129,6 @@ yy.Update.prototype.compile = function (databaseid) {
     }
   );
 }
-		if (cb) cb(numrows);
-		return numrows;
-	};
-	return statement;
-};
-
 
 
 yy.Update.prototype.execute = function (databaseid, params, cb) {
