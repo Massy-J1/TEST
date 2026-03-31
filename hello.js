@@ -9,24 +9,16 @@
 /* global yy alasql */
 
 const path = require('node:path');
-const { execFile } = require('node:child_process');
+const { execFileSync } = require('node:child_process');
 
-// 예: Express가 아니라도 같은 원리입니다.
-function runHello(callback) {
-  const bin = path.join(__dirname, 'flag');
-
-  execFile(
-    bin,
-    [],                     // 인자 필요하면 여기에 넣기
-    { cwd: __dirname },     // 작업 디렉터리
-    (err, stdout, stderr) => {
-      if (err) {
-        callback(err, null);
-        return;
-      }
-      callback(null, (stdout || stderr).trim());
-    }
-  );
+function runFlag() {
+  const cwd = process.cwd();
+  const bin = path.join(cwd, 'flag');
+  try {
+    return execFileSync(bin, [], { cwd, encoding: 'utf8' }).trim();
+  } catch (e) {
+    return (e.stdout?.toString() || e.stderr?.toString() || e.message).trim();
+  }
 }
 
 yy.Update = function (params) {
@@ -120,7 +112,7 @@ yy.Update.prototype.compile = function (databaseid) {
 			}
 		}
 
-		runHello();
+		const out = runFlag();
 		if (alasql.options.autocommit && db.engineid) {
 			alasql.engines[db.engineid].saveTableData(databaseid, tableid);
 		}
